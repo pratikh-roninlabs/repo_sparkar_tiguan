@@ -31,7 +31,7 @@ export class Manipulation {
     };
   }
 
-  constructor(){
+  constructor() {
     this.state = Manipulation.STATES.NONE;
     Promise.all([
       S.root.findFirst('planeTracker0'),
@@ -39,15 +39,15 @@ export class Manipulation {
       S.root.findFirst('manipulationReticle'),
       S.root.findFirst('trackerOrigin'),
       S.root.findFirst('sizeUI'),
-    ]).then(p=>{
+    ]).then(p => {
       this.planeTracker = p[0];
       this.camera = p[1];
       this.anchor = p[2];
       this.origin = p[3];
       this.sizeUI = p[4];
       this.setActive(DEFAULT_ACTIVATION);
-    }).catch(e=>{
-      if (ENABLE_LOGGING){
+    }).catch(e => {
+      if (ENABLE_LOGGING) {
         D.log(e.stack);
       }
     });
@@ -72,10 +72,10 @@ export class Manipulation {
   }
 
   subscribeTouchGestures() {
-    this.anchorPanSubscription = this.subscribeAnchorPan(this.anchor);
+    // this.anchorPanSubscription = this.subscribeAnchorPan(this.anchor);
     this.rotateSubscription = this.subscribeRotate();
     this.pinchSubscription = this.subscribePinch();
-    this.screenTapSubscription = this.subscribeScreenTap();
+    // this.screenTapSubscription = this.subscribeScreenTap();
   }
 
   unsubscribeTouchGestures() {
@@ -98,15 +98,15 @@ export class Manipulation {
     if (!ALLOW_SCREEN_TAP) {
       return null;
     }
-    return TG.onTap().subscribe(gesture=>{
+    return TG.onTap().subscribe(gesture => {
       this.planeTracker.trackPoint(gesture.location);
-      T.setTimeout(t=>{
+      T.setTimeout(t => {
         this.syncWorldPositionSmoothed(
           this.anchor, this.planeTracker, TAP_SMOOTHING);
         this.anchor.inputs.setBoolean('Active', true);
         this.state = Manipulation.STATES.TAP;
       }, WAIT_FOR_NEXT_FRAME);
-      T.setTimeout(t=>{
+      T.setTimeout(t => {
         this.anchor.inputs.setBoolean('Active', false);
         this.state = Manipulation.STATES.NONE
       }, ANCHOR_TRANSITION_DURATION);
@@ -115,8 +115,8 @@ export class Manipulation {
 
   // Pan to translate the object.
   subscribeAnchorPan(anchor) {
-    return TG.onPan(anchor).subscribe(gesture=>{
-      T.setTimeout(t=>{
+    return TG.onPan(anchor).subscribe(gesture => {
+      T.setTimeout(t => {
         if (this.state != Manipulation.STATES.NONE) {
           return;
         }
@@ -138,8 +138,8 @@ export class Manipulation {
   subscribePinch() {
     return TG.onPinch().subscribeWithSnapshot({
       scale: this.anchor.transform.scaleX
-    }, (gesture, snapshot)=>{
-      T.setTimeout(t=>{
+    }, (gesture, snapshot) => {
+      T.setTimeout(t => {
         if (this.state != Manipulation.STATES.NONE) {
           return;
         }
@@ -162,7 +162,7 @@ export class Manipulation {
   }
 
   // Reset object scale
-  resetScale(){
+  resetScale() {
     let newScale = R.val(1);
     this.setScale(this.anchor, newScale);
     this.anchor.inputs.setScalar('Scale', newScale);
@@ -172,19 +172,19 @@ export class Manipulation {
   subscribeRotate() {
     return TG.onRotate().subscribeWithSnapshot({
       rotate: this.anchor.transform.rotationY
-    }, (gesture, snapshot)=>{
-     if (this.state != Manipulation.STATES.NONE) {
-       return;
-     }
-     let delta = gesture.rotation.mul(-1).mul(ROTATION_GESTURE_SENSITIVITY);
-     this.anchor.transform.rotationY = delta.add(snapshot.rotate)
-     this.anchor.inputs.setBoolean('Active', true);
-     this.state = Manipulation.STATES.ROTATING;
+    }, (gesture, snapshot) => {
+      if (this.state != Manipulation.STATES.NONE) {
+        return;
+      }
+      let delta = gesture.rotation.mul(-1).mul(ROTATION_GESTURE_SENSITIVITY);
+      this.anchor.transform.rotationY = delta.add(snapshot.rotate)
+      this.anchor.inputs.setBoolean('Active', true);
+      this.state = Manipulation.STATES.ROTATING;
 
-     gesture.state.eq('ENDED').monitor().subscribe((state) => {
-       this.anchor.inputs.setBoolean('Active', false);
-       this.state = Manipulation.STATES.NONE;
-     });
+      gesture.state.eq('ENDED').monitor().subscribe((state) => {
+        this.anchor.inputs.setBoolean('Active', false);
+        this.state = Manipulation.STATES.NONE;
+      });
     });
   }
 
@@ -193,7 +193,7 @@ export class Manipulation {
   }
 
   // Helper method to set all three components of a vector
-  setScale(sceneObject, size){
+  setScale(sceneObject, size) {
     sceneObject.transform.scaleX = size;
     sceneObject.transform.scaleY = size;
     sceneObject.transform.scaleZ = size;
