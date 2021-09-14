@@ -99,17 +99,17 @@ export class Manipulation {
       return null;
     }
     return TG.onTap().subscribe(gesture => {
-      this.planeTracker.trackPoint(gesture.location);
-      T.setTimeout(t => {
-        this.syncWorldPositionSmoothed(
-          this.anchor, this.planeTracker, TAP_SMOOTHING);
-        this.anchor.inputs.setBoolean('Active', true);
-        this.state = Manipulation.STATES.TAP;
-      }, WAIT_FOR_NEXT_FRAME);
-      T.setTimeout(t => {
-        this.anchor.inputs.setBoolean('Active', false);
-        this.state = Manipulation.STATES.NONE
-      }, ANCHOR_TRANSITION_DURATION);
+      // this.planeTracker.trackPoint(gesture.location);
+      // T.setTimeout(t => {
+      //   this.syncWorldPositionSmoothed(
+      //     this.anchor, this.planeTracker, TAP_SMOOTHING);
+      //   this.anchor.inputs.setBoolean('Active', true);
+      //   this.state = Manipulation.STATES.TAP;
+      // }, WAIT_FOR_NEXT_FRAME);
+      // T.setTimeout(t => {
+      //   this.anchor.inputs.setBoolean('Active', false);
+      //   this.state = Manipulation.STATES.NONE
+      // }, ANCHOR_TRANSITION_DURATION);
     });
   }
 
