@@ -10,8 +10,8 @@ const I = require('Instruction');
 const TG = require('TouchGestures');
 export const D = require('Diagnostics');
 
-const ENABLE_LOGGING = false;
-const DEFAULT_ACTIVATION = false;
+const ENABLE_LOGGING = true;
+const DEFAULT_ACTIVATION = true;
 const ROTATION_GESTURE_SENSITIVITY = 2;
 const PAN_SMOOTHING = 100;
 const TAP_SMOOTHING = 100;
@@ -34,17 +34,17 @@ export class Manipulation {
   constructor() {
     this.state = Manipulation.STATES.NONE;
     Promise.all([
-      S.root.findFirst('planeTracker0'),
+      // S.root.findFirst('planeTracker0'),
       S.root.findFirst('Camera'),
-      S.root.findFirst('manipulationReticle'),
-      S.root.findFirst('trackerOrigin'),
-      S.root.findFirst('sizeUI'),
+      S.root.findFirst('CarGroup'),
+      // S.root.findFirst('trackerOrigin'),
+      // S.root.findFirst('sizeUI'),
     ]).then(p => {
-      this.planeTracker = p[0];
-      this.camera = p[1];
-      this.anchor = p[2];
-      this.origin = p[3];
-      this.sizeUI = p[4];
+      // this.planeTracker = p[0];
+      this.camera = p[0];
+      this.anchor = p[1];
+      // this.origin = p[3];
+      // this.sizeUI = p[4];
       this.setActive(DEFAULT_ACTIVATION);
     }).catch(e => {
       if (ENABLE_LOGGING) {
@@ -61,7 +61,7 @@ export class Manipulation {
       this.subscribeTouchGestures();
       this.anchor.inputs.setScalar('Scale', 1);
       this.isActive = true;
-      I.bind(R.val(false), '');
+      // I.bind(R.val(false), '');
     } else {
       this.anchor.inputs.setBoolean('Active', false);
       this.unsubscribeTouchGestures();
@@ -148,14 +148,14 @@ export class Manipulation {
         this.state = Manipulation.STATES.SCALING;
         this.anchor.inputs.setBoolean('Active', true);
         this.anchor.inputs.setScalar('Scale', newScale.clamp(MIN_SCALE, MAX_SCALE));
-        this.sizeUI.inputs.setBoolean('Active', true);
+        // this.sizeUI.inputs.setBoolean('Active', true);
         let percentage = newScale.clamp(MIN_SCALE, MAX_SCALE).mul(100).floor().format('{:.0f}%');
-        this.sizeUI.inputs.setString('Label', percentage);
+        // this.sizeUI.inputs.setString('Label', percentage);
 
         gesture.state.eq('ENDED').monitor().subscribe((state) => {
           this.state = Manipulation.STATES.NONE;
           this.anchor.inputs.setBoolean('Active', false);
-          this.sizeUI.inputs.setBoolean('Active', false);
+          // this.sizeUI.inputs.setBoolean('Active', false);
         });
       }, YIELD_TO_ROTATE);
     });
