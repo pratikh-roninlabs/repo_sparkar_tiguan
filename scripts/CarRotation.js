@@ -44,8 +44,8 @@ let preY = Reactive.val(0);
   // To log messages to the console
   // Diagnostics.log('Console message logged from the script.');
 
-  const xNode = await Scene.root.findFirst('parentX');
-  const yNode = await Scene.root.findFirst('parentY');
+  // const xNode = await Scene.root.findFirst('parentX');
+  const yNode = await Scene.root.findFirst('CarGroup');
 
   let finalX = Reactive.val(0);
   let finalY = Reactive.val(-3.14 / 6);
@@ -68,6 +68,7 @@ let preY = Reactive.val(0);
   // let carPos = Reactive.vector(0, -0.2, -2);
   // let right = cameraup.cross(carPos);
   // let up = carPos.cross(right);
+
 
   let yNodeRotation = yNode.transform.rotation.pinLastValue();
 
