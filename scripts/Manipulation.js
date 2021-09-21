@@ -73,7 +73,7 @@ export class Manipulation {
 
   subscribeTouchGestures() {
     // this.anchorPanSubscription = this.subscribeAnchorPan(this.anchor);
-    this.rotateSubscription = this.subscribeRotate();
+    // this.rotateSubscription = this.subscribeRotate();
     this.pinchSubscription = this.subscribePinch();
     // this.screenTapSubscription = this.subscribeScreenTap();
   }
