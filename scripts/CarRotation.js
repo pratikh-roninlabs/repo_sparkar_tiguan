@@ -50,41 +50,32 @@ let preY = Reactive.val(0);
   let finalX = Reactive.val(0);
   let finalY = Reactive.val(-3.14 / 6);
 
-  // let currX = await Patches.outputs.getScalar("panY");
-  // let diffX = currX.sub(preX);
-  // finalX = finalX.add(diffX.mul(0.001));
+  let currX = await Patches.outputs.getScalar("panY");
+  let diffX = currX.sub(preX);
+  finalX = finalX.add(diffX.mul(0.001));
   // xNode.transform.rotationX = finalX;
-  // preX = currX;
+  preX = currX;
 
 
   let currY = await Patches.outputs.getScalar("panX");
   let diffY = currY.sub(preY);
   finalY = finalY.add(diffY.mul(0.005));
-  yNode.transform.rotationY = finalY;
+  // yNode.transform.rotationY = finalY;
   preY = currY;
 
-  // (await Patches.outputs.getScalar("panX")).monitor().subscribe((val) => {
-  //   const currX = val.newValue;
-  //   // Diagnostics.log(xNode.transform.rotation.x.pinLastValue());
-  //   if (currX !== 0) {
-  //     // Diagnostics.log(currX);
+  //******* Method 1 */
+  // let cameraup = Reactive.vector(0, 1, 0);
+  // let carPos = Reactive.vector(0, -0.2, -2);
+  // let right = cameraup.cross(carPos);
+  // let up = carPos.cross(right);
 
-  //     let diff = currX - preX;
-  //     finalX = xNode.transform.rotationX.add(Reactive.val(diff));
+  let yNodeRotation = yNode.transform.rotation.pinLastValue();
 
-  //     // xNode.transform.rotationX.add(Reactive.val(currX - preX));
-  //     // const finalRot = Reactive.add(xNode.transform.rotationX, Reactive.val(currX - preX));
-  //     // xNode.transform.rotationX = finalRot;
-  //   }
-  //   preX = currX;
-  // });
-  // (await Patches.outputs.getScalar("panY")).monitor().subscribe((val) => {
-  //   const currY = val.newValue;
-  //   // Diagnostics.log(currY);
-  //   if (currY !== 0) {
-  //     // yNode.transform.rotationY.add(Reactive.val(currY - preY));
-  //   }
-  //   preY = currY;
-  // });
+  //********************************************************* */
+  let rot = Reactive.quaternionFromAngleAxis(diffY.mul(0.005), Reactive.vector(0, 1, 0)).mul(yNodeRotation);
+  let rot2 = Reactive.quaternionFromAngleAxis(diffX.mul(0.005), Reactive.vector(1, 0, 0)).mul(rot);
+
+  yNode.transform.rotation = rot2;
+
 
 })(); // Enables async/await in JS [part 2]
