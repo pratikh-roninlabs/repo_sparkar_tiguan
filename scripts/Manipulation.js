@@ -4,6 +4,7 @@
 // @ts-nocheck
 
 const S = require('Scene');
+const P = require('Patches');
 const R = require('Reactive');
 const T = require('Time');
 const I = require('Instruction');
@@ -22,6 +23,7 @@ const YIELD_TO_ROTATE = 30;
 const ANCHOR_TRANSITION_DURATION = 400;
 const MIN_SCALE = .05;
 const MAX_SCALE = 3;
+var interior_bool = false;
 
 // This class implement the object manipulation logics (drag, rotate, scale)
 export class Manipulation {
@@ -33,12 +35,21 @@ export class Manipulation {
 
   constructor() {
     this.state = Manipulation.STATES.NONE;
+    
+    P.outputs.getBoolean('interior').then(event => {
+      event.monitor().subscribe(function (values) {
+        //this.setScale(this.anchor, 1);
+        interior_bool = values.newValue;
+      });
+    });
+    
     Promise.all([
       // S.root.findFirst('planeTracker0'),
       S.root.findFirst('Camera'),
       S.root.findFirst('CarGroup'),
       // S.root.findFirst('trackerOrigin'),
       // S.root.findFirst('sizeUI'),
+      
     ]).then(p => {
       // this.planeTracker = p[0];
       this.camera = p[0];
@@ -141,6 +152,11 @@ export class Manipulation {
     }, (gesture, snapshot) => {
       T.setTimeout(t => {
         if (this.state != Manipulation.STATES.NONE) {
+          return;
+        }
+        if(interior_bool)
+        {
+          
           return;
         }
         let newScale = gesture.scale.mul(snapshot.scale);
