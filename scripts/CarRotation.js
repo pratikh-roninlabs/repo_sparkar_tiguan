@@ -31,6 +31,7 @@ export const Reactive = require('Reactive');
 let preX = Reactive.val(0);
 let preY = Reactive.val(0);
 
+
 (async function () {  // Enables async/await in JS [part 1]
 
   // To access scene objects
@@ -75,8 +76,19 @@ let preY = Reactive.val(0);
   //********************************************************* */
   let rot = Reactive.quaternionFromAngleAxis(diffY.mul(0.005), Reactive.vector(0, 1, 0)).mul(yNodeRotation);
   let rot2 = Reactive.quaternionFromAngleAxis(diffX.mul(0.005), Reactive.vector(1, 0, 0)).mul(rot);
-
+  
   yNode.transform.rotation = rot2;
 
 
+  Patches.outputs.getScalar('index').then(event=> {
+    event.monitor().subscribe(function (values) {
+
+      Diagnostics.log("index change");
+      yNode.transform.rotation = Reactive.quaternionFromAngleAxis(0, Reactive.vector(1, 0, 0));
+
+    });
+  });
+
 })(); // Enables async/await in JS [part 2]
+
+
